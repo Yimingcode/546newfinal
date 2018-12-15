@@ -1,6 +1,8 @@
 const mongoCollections = require("../config/mongoCollections");
 const users= mongoCollections.users;
 
+const ObjectID = require("mongodb").ObjectID;
+
 module.exports = {
 
     async createUser(firstname,lastname, email, password, dataofbirth, gender) {
@@ -41,6 +43,13 @@ module.exports = {
         return user;
     },
 
+    async getUserById(id) {
+        if (!id) throw "you must provide an id to search for";
+        const userCollection = await users();
+        const user = await userCollection.findOne({ _id: new ObjectID(id)});
+        return user;
+    },
+
     //modify or update task in database
     async UpdateUser(email) {
         if (!email) throw "You must provide an id to search for";
@@ -63,6 +72,21 @@ module.exports = {
         }
 
         return await this.getUser(email);
+    },
+
+    async updateUserById(id, firstname, lastname, email, birthDate, gender) {
+        const userCollection = await users();
+        const myquery = { "_id": new ObjectID(id)};
+        const newvalues = { $set: {"firstname": firstname,
+                                    "lastname": lastname,
+                                    "email": email,
+                                    "dataofbirth":birthDate,
+                                    "gender": gender } };
+        const updatedInfo = await userCollection.updateOne(myquery, newvalues);
+        if (updatedInfo.modifiedCount === 0) {
+            throw "could not update user successfully"
+        }
+        return updatedInfo.modifiedCount;
     },
 
     async removeUser(email) {
