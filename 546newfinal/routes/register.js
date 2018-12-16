@@ -8,9 +8,7 @@ const dbOperation = require("../data/users");
 
 
 router.get("/register", (req, res) => {
-    console.log("here");
     res.render('main/register');
-
 });
 
 router.post("/register", async (req, res) => {

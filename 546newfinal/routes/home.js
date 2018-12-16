@@ -2,26 +2,31 @@ const express = require("express");
 const router = express.Router();
 
 const dbOperation = require("../data/users");
+const recordsData = require("../data/rec");
 
+var multer  = require('multer')
+// var upload = multer({ dest: 'uploads/' })
 
-
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'uploads/');
+    },
+    filename: function (req, file, cb) {
+      cb(null, file.originalname + '-' + Date.now());
+    }
+  })
+  
+  var upload = multer({ storage: storage })
 
 router.get("/home", async (req, res) => {
     try{
+       
         res.render("main/home");
     } catch (e) {
         res.status(500).send();
     }
 
 });
-
-router.get("/home/authors", async(req, res) =>{
-    try{
-        res.render("main/authors");
-    }catch (e){
-        res.status(500).send();
-    }
-})
 
 router.get("/home/account", async(req, res) => {
     try {
@@ -68,6 +73,20 @@ router.post("/home/account/update", async (req, res) => {
     } catch (e) {
         res.status(500).send();
     }
+})
+
+router.get("/home/upload", async (req, res) => {
+    res.render("main/upload");
+})
+
+router.post("/home/upload",upload.single('resume'), async (req,res)=>{
+        let companyName = req.body.companyName;
+        let position = req.body.position;
+        let jobDescription = req.body.jobDescription;
+        let jobStatus = req.body.jobStatus;
+        let comments = req.body.comments; 
+        await recordsData.createRec(req.cookies.AuthCookie, companyName, position, jobDescription, jobStatus, comments);
+        res.send("upload sussessful");
 })
 
 module.exports = router;
