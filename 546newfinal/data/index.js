@@ -1,6 +1,8 @@
 
 const users = require('./users');
+const record = require('./rec');
 
 module.exports = {
-    usersAccount:users
+    usersAccount:users,
+    records: record
 };
