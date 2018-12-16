@@ -8,13 +8,20 @@ const dbOperation = require("../data/users");
 
 router.get("/home", async (req, res) => {
     try{
-       
         res.render("main/home");
     } catch (e) {
         res.status(500).send();
     }
 
 });
+
+router.get("/home/authors", async(req, res) =>{
+    try{
+        res.render("main/authors");
+    }catch (e){
+        res.status(500).send();
+    }
+})
 
 router.get("/home/account", async(req, res) => {
     try {
